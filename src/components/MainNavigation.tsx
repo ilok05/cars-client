@@ -1,6 +1,12 @@
 import { NavLink } from "react-router";
+import { useCarUiStore } from "../store/useCarUiStore";
 
 export function MainNavigation() {
+  const favoriteCount =
+    useCarUiStore(
+      (state) =>
+        state.favoriteCarIds.length,
+    );
   return (
     <nav className="navigation">
       <NavLink
@@ -14,6 +20,7 @@ export function MainNavigation() {
 
       <NavLink
         to="/cars"
+        end
         className={({ isActive }) => (isActive ? "active" : undefined)}
       >
         Samochody
@@ -21,10 +28,15 @@ export function MainNavigation() {
 
       <NavLink
         to="/cars/new"
+        end
         className={({ isActive }) => (isActive ? "active" : undefined)}
       >
         Dodaj Samochod
       </NavLink>
+
+      <span className="favorite-counter">
+        Ulubione: {favoriteCount}
+      </span>
     </nav>
   );
 }

@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router';
 import type { NewCar } from '../models/Car';
 import { getCarById, updateCar } from "../services/carService";
 import { useEffect, useState,  type ChangeEvent, type SubmitEvent } from "react";
+import axios from 'axios';
 
 interface CarFormData{
     brand: string;
@@ -69,13 +70,14 @@ export default function EditCarPage(){
                     bodyType: car.bodyType,
                 });
             } catch (caughtError) {
-                if (!controller.signal.aborted) {
-                    if (caughtError instanceof Error) {
+                if(axios.isCancel(caughtError)){
+                    return;
+                }
+                if (caughtError instanceof Error) {
                         setError(caughtError.message);
                     } else {
-                        setError("Nie udało się pobrać samochodu.");
+                        setError("Wystąpił nieznany błąd.");
                     }
-                }
             } finally {
                 if (!controller.signal.aborted) {
                     setIsLoading(false);
@@ -104,7 +106,7 @@ export default function EditCarPage(){
     async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        if (!id || !Number.isInteger(Number(id))) {
+        if (!id) {
             setError("Nieprawidłowe ID samochodu.");
             return;
         }
@@ -170,105 +172,114 @@ export default function EditCarPage(){
 
             {error && <p className="error">{error}</p>}
 
-            <label>
-                Marka
-                <input
-                    name="brand"
-                    type="text"
-                    value={formData.brand}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-
-            <label>
-                Model
-                <input
-                    name="model"
-                    type="text"
-                    value={formData.model}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-
-            <label>
-                Liczba drzwi
-                <input
-                    name="doorsNumber"
-                    type="number"
-                    value={formData.doorsNumber ?? ""}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-
-            <label>
-                Ładowność
-                <input
-                    name="luggageCapacity"
-                    type="number"
-                    value={formData.luggageCapacity ?? ""}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-
-            <label>
-                Pojemność silnika
-                <input
-                    name="engineCapacity"
-                    type="number"
-                    value={formData.engineCapacity ?? ""}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-
-            <label>
-                Typ paliwa
-                <input
-                    name="fuelType"
-                    type="number"
-                    value={formData.fuelType ?? ""}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-
-            <label>
-                Data produkcji
-                <input
+            <div className="form-group">
+                <label>
+                    Marka
+                    <input 
+                        name="brand"
+                        type="text"
+                        value={formData.brand}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Model
+                    <input
+                        name="model"
+                        type="text"
+                        value={formData.model}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Lizcba drzwi
+                    <input
+                        name="doorsNumber"
+                        type="number"
+                        value={formData.doorsNumber ?? ""}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Ładowność
+                    <input
+                        name="luggageCapacity"
+                        type="number"
+                        value={formData.luggageCapacity ?? ""}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Pojemnosc silnika
+                    <input
+                        name="engineCapacity"
+                        type="number"
+                        value={formData.engineCapacity ?? ""}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Typ paliwa
+                    <input
+                        name="fuelType"
+                        type="number"
+                        value={formData.fuelType ?? ""}
+                        onChange={handleChange}
+                        required
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Data Produkcji
+                    <input
                     name="productionDate"
                     type="date"
                     value={formData.productionDate}
                     onChange={handleChange}
                     required
-                />
-            </label>
-
-            <label>
-                Średnie spalanie
-                <input
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Spalanie paliwa
+                    <input
                     name="averageFuelConsumption"
                     type="number"
-                    step="0.1"
                     value={formData.averageFuelConsumption ?? ""}
                     onChange={handleChange}
                     required
-                />
-            </label>
-
-            <label>
-                Typ nadwozia
-                <input
+                    />
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Typ nadwozia
+                    <input
                     name="bodyType"
                     type="number"
                     value={formData.bodyType ?? ""}
                     onChange={handleChange}
                     required
-                />
-            </label>
+                    />
+                </label>
+            </div>
 
             <button type="submit" disabled={isSaving}>
                 {isSaving ? "Zapisywanie..." : "Zapisz zmiany"}

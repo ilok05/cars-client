@@ -100,111 +100,123 @@ export default function CreateCarPage(){
     }
 
     return (
-    <form className="person-form" onSubmit={handleSubmit}>
+    <form className="car-form" onSubmit={handleSubmit}>
       <h2>Dodaj samochod</h2>
+    
 
-      <label>
-        Marka
-        <input 
-          name="brand"
-          type="text"
-          value={formData.brand}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Model
-        <input
-          name="model"
-          type="text"
-          value={formData.model}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Lizcba drzwi
-        <input
-          name="doorsNumber"
-          type="number"
-          value={formData.doorsNumber ?? ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Ładowność
-        <input
-          name="luggageCapacity"
-          type="number"
-          value={formData.luggageCapacity ?? ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Pojemnosc silnika
-        <input
-          name="engineCapacity"
-          type="number"
-          value={formData.engineCapacity ?? ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Typ paliwa
-        <input
-          name="fuelType"
-          type="number"
-          value={formData.fuelType ?? ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Data Produkcji
-        <input
-          name="productionDate"
-          type="date"
-          value={formData.productionDate}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Spalanie paliwa
-        <input
-          name="averageFuelConsumption"
-          type="number"
-          value={formData.averageFuelConsumption ?? ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Typ nadwozia
-        <input
-          name="bodyType"
-          type="number"
-          value={formData.bodyType ?? ""}
-          onChange={handleChange}
-          required
-        />
-      </label>
+      <div className="form-group">
+        <label>
+          Marka
+          <input 
+            name="brand"
+            type="text"
+            value={formData.brand}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Model
+          <input
+            name="model"
+            type="text"
+            value={formData.model}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Lizcba drzwi
+          <input
+            name="doorsNumber"
+            type="number"
+            value={formData.doorsNumber ?? ""}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Ładowność
+          <input
+            name="luggageCapacity"
+            type="number"
+            value={formData.luggageCapacity ?? ""}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Pojemnosc silnika
+          <input
+            name="engineCapacity"
+            type="number"
+            value={formData.engineCapacity ?? ""}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Typ paliwa
+          <input
+            name="fuelType"
+            type="number"
+            value={formData.fuelType ?? ""}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Data Produkcji
+          <input
+            name="productionDate"
+            type="date"
+            value={formData.productionDate}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+         Spalanie paliwa
+         <input
+           name="averageFuelConsumption"
+           type="number"
+           value={formData.averageFuelConsumption ?? ""}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      <div className="form-group">
+        <label>
+          Typ nadwozia
+          <input
+           name="bodyType"
+            type="number"
+            value={formData.bodyType ?? ""}
+            onChange={handleChange}
+            required
+          />
+        </label>
+      </div>
+      
 
       {/* type="submit" informuje przeglądarkę, że przycisk służy do zatwierdzania 
       formularza. */}
-      <button type="submit">Dodaj osobę</button>
+      <button type="submit">Dodaj samochod</button>
     </form>
   );
 }
