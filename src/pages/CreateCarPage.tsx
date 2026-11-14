@@ -4,110 +4,111 @@ import type { NewCar } from '../models/Car';
 import { createCar } from "../services/carService";
 
 
-interface CarFormData{
-    brand: string;
-    model: string;
-    doorsNumber: number | null;
-    luggageCapacity: number | null;
-    engineCapacity: number | null;
-    fuelType: number | null;
-    productionDate: string;
-    averageFuelConsumption: number | null;
-    bodyType: number | null;
+interface CarFormData {
+  brand: string;
+  model: string;
+  doorsNumber: number | null;
+  luggageCapacity: number | null;
+  engineCapacity: number | null;
+  fuelType: number | null;
+  productionDate: string;
+  averageFuelConsumption: number | null;
+  bodyType: number | null;
 }
 
 const initialFormData: CarFormData = {
-    brand: "",
-    model: "",
-    doorsNumber: null,
-    luggageCapacity: null,
-    engineCapacity: null,
-    fuelType: null,
-    productionDate: "",
-    averageFuelConsumption: null,
-    bodyType: null,
+  brand: "",
+  model: "",
+  doorsNumber: null,
+  luggageCapacity: null,
+  engineCapacity: null,
+  fuelType: null,
+  productionDate: "",
+  averageFuelConsumption: null,
+  bodyType: null,
 
 };
 
-export default function CreateCarPage(){
-    const navigate = useNavigate();
+export default function CreateCarPage() {
+  const navigate = useNavigate();
 
-    const [formData, setFormData] =
-        useState<CarFormData>(initialFormData);
+  const [formData, setFormData] =
+    useState<CarFormData>(initialFormData);
 
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-    function handleChange(
-        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ){
-        const {name, value, type} = event.target;
 
-        setFormData((currentFromData)=>({
-            ...currentFromData,
-            [name]: 
-                type === "number"
-                    ? value === "" ? null : Number(value)
-                    : value,
-        }));
+  function handleChange(
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
+    const { name, value, type } = event.target;
+
+    setFormData((currentFromData) => ({
+      ...currentFromData,
+      [name]:
+        type === "number"
+          ? value === "" ? null : Number(value)
+          : value,
+    }));
+  }
+
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (
+      formData.doorsNumber === null ||
+      formData.luggageCapacity === null ||
+      formData.engineCapacity === null ||
+      formData.fuelType === null ||
+      formData.averageFuelConsumption === null ||
+      formData.bodyType === null
+    ) {
+      setError("Uzupełnij wszystkie pola liczbowe.");
+      return;
     }
 
-    function handleSubmit(event: SubmitEvent<HTMLFormElement>){
-        event.preventDefault();
+    const newCar: NewCar = {
+      brand: formData.brand.trim(),
+      model: formData.model.trim(),
+      doorsNumber: Number(formData.doorsNumber),
+      luggageCapacity: Number(formData.luggageCapacity),
+      engineCapacity: Number(formData.engineCapacity),
+      fuelType: Number(formData.fuelType),
+      productionDate: formData.productionDate,
+      averageFuelConsumption: Number(formData.averageFuelConsumption),
+      bodyType: Number(formData.bodyType)
+    };
+    try {
+      setIsLoading(true);
+      setError(null);
 
-        if (
-            formData.doorsNumber === null ||
-            formData.luggageCapacity === null ||
-            formData.engineCapacity === null ||
-            formData.fuelType === null ||
-            formData.averageFuelConsumption === null ||
-            formData.bodyType === null
-        ) {
-            setError("Uzupełnij wszystkie pola liczbowe.");
-            return;
-        }
+      createCar(newCar);
 
-        const newCar: NewCar = {
-            brand: formData.brand.trim(),
-            model: formData.model.trim(),
-            doorsNumber: Number(formData.doorsNumber),
-            luggageCapacity: Number(formData.luggageCapacity),
-            engineCapacity: Number(formData.engineCapacity),
-            fuelType: Number(formData.fuelType),
-            productionDate: formData.productionDate,
-            averageFuelConsumption: Number(formData.averageFuelConsumption),
-            bodyType: Number(formData.bodyType)
-        };
-         try {
-            setIsLoading(true);
-            setError(null);
+      setFormData(initialFormData);
 
-            createCar(newCar);
+      navigate("/cars");
 
-            setFormData(initialFormData);
-
-            navigate("/cars");
-
-        } catch (caughtError) {
-            if (caughtError instanceof Error) {
-                setError(caughtError.message);
-            } else {
-                setError("Nie udało się dodać samochodu.");
-            }
-        } finally {
-            setIsLoading(false);
-        }
+    } catch (caughtError) {
+      if (caughtError instanceof Error) {
+        setError(caughtError.message);
+      } else {
+        setError("Nie udało się dodać samochodu.");
+      }
+    } finally {
+      setIsLoading(false);
     }
+  }
 
-    return (
+  return (
     <form className="car-form" onSubmit={handleSubmit}>
       <h2>Dodaj samochod</h2>
-    
+
 
       <div className="form-group">
         <label>
           Marka
-          <input 
+          <input
             name="brand"
             type="text"
             value={formData.brand}
@@ -167,13 +168,19 @@ export default function CreateCarPage(){
       <div className="form-group">
         <label>
           Typ paliwa
-          <input
+          <select
             name="fuelType"
-            type="number"
             value={formData.fuelType ?? ""}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Wybierz typ paliwa</option>
+            <option value={0}>Petrol</option>
+            <option value={1}>Diesel</option>
+            <option value={2}>Hybrid</option>
+            <option value={3}>Electric</option>
+            <option value={4}>LSG</option>
+          </select>
         </label>
       </div>
       <div className="form-group">
@@ -190,11 +197,11 @@ export default function CreateCarPage(){
       </div>
       <div className="form-group">
         <label>
-         Spalanie paliwa
-         <input
-           name="averageFuelConsumption"
-           type="number"
-           value={formData.averageFuelConsumption ?? ""}
+          Spalanie paliwa
+          <input
+            name="averageFuelConsumption"
+            type="number"
+            value={formData.averageFuelConsumption ?? ""}
             onChange={handleChange}
             required
           />
@@ -203,16 +210,22 @@ export default function CreateCarPage(){
       <div className="form-group">
         <label>
           Typ nadwozia
-          <input
-           name="bodyType"
-            type="number"
+          <select
+            name="bodyType"
             value={formData.bodyType ?? ""}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Wybierz typ paliwa</option>
+            <option value={0}>Hatchback</option>
+            <option value={1}>Sedan</option>
+            <option value={2}>Kombi</option>
+            <option value={3}>SUV</option>
+            <option value={4}>Roadster</option>
+          </select>
         </label>
       </div>
-      
+
 
       {/* type="submit" informuje przeglądarkę, że przycisk służy do zatwierdzania 
       formularza. */}

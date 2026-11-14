@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import CarCard from "../components/CarCard";
 import { useCarUiStore } from "../store/useCarUiStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function CarsPage(){
+    const user = useAuthStore((state) => state.user);
     const [cars, setCars] = useState<Car[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null); // czy jest błąd
@@ -15,7 +17,8 @@ export default function CarsPage(){
     const setSearchTerm = useCarUiStore((state) => state.setSearchTerm);
     const showFavoritesOnly = useCarUiStore((state) => state.showFavoritesOnly);
     const setShowFavoritesOnly = useCarUiStore((state) => state.setShowFavoritesOnly);
-    const favoriteCarIds = useCarUiStore((state) => state.favoriteCarIds);
+    const favoriteCarIdsByUser = useCarUiStore((state) => state.favoriteCarIdsByUser);
+    const favoriteCarIds = user ? favoriteCarIdsByUser[user.id] ?? [] : [];
 
     const normalizedSearch = searchTerm.trim().toLowerCase();
     const visibleCars = cars.filter((car) => {
@@ -42,7 +45,9 @@ export default function CarsPage(){
         try {
             await deleteCar(id);
 
-            removeFavorite(id);
+            if(user){
+                removeFavorite(user.id, id);
+            }
             setCars(
                 (currentCars) => 
                     currentCars.filter(

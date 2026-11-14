@@ -1,10 +1,10 @@
 import { Link, useParams, useNavigate } from 'react-router';
 import type { NewCar } from '../models/Car';
 import { getCarById, updateCar } from "../services/carService";
-import { useEffect, useState,  type ChangeEvent, type SubmitEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
 import axios from 'axios';
 
-interface CarFormData{
+interface CarFormData {
     brand: string;
     model: string;
     doorsNumber: number | null;
@@ -29,8 +29,8 @@ const initialFormData: CarFormData = {
 
 };
 
-export default function EditCarPage(){
-    const {id} = useParams();
+export default function EditCarPage() {
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState<CarFormData>(initialFormData)
@@ -38,7 +38,7 @@ export default function EditCarPage(){
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         const controller = new AbortController();
 
         async function loadCar() {
@@ -70,14 +70,14 @@ export default function EditCarPage(){
                     bodyType: car.bodyType,
                 });
             } catch (caughtError) {
-                if(axios.isCancel(caughtError)){
+                if (axios.isCancel(caughtError)) {
                     return;
                 }
                 if (caughtError instanceof Error) {
-                        setError(caughtError.message);
-                    } else {
-                        setError("Wystąpił nieznany błąd.");
-                    }
+                    setError(caughtError.message);
+                } else {
+                    setError("Wystąpił nieznany błąd.");
+                }
             } finally {
                 if (!controller.signal.aborted) {
                     setIsLoading(false);
@@ -86,10 +86,10 @@ export default function EditCarPage(){
         }
         loadCar();
         return () => controller.abort();
-    },[id]);
+    }, [id]);
 
     function handleChange(
-        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) {
         const { name, value, type } = event.target;
 
@@ -175,7 +175,7 @@ export default function EditCarPage(){
             <div className="form-group">
                 <label>
                     Marka
-                    <input 
+                    <input
                         name="brand"
                         type="text"
                         value={formData.brand}
@@ -235,10 +235,28 @@ export default function EditCarPage(){
             <div className="form-group">
                 <label>
                     Typ paliwa
-                    <input
+                    <select
                         name="fuelType"
-                        type="number"
                         value={formData.fuelType ?? ""}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Wybierz typ paliwa</option>
+                        <option value={0}>Petrol</option>
+                        <option value={1}>Diesel</option>
+                        <option value={2}>Hybrid</option>
+                        <option value={3}>Electric</option>
+                        <option value={4}>LSG</option>
+                    </select>
+                </label>
+            </div>
+            <div className="form-group">
+                <label>
+                    Data Produkcji
+                    <input
+                        name="productionDate"
+                        type="date"
+                        value={formData.productionDate}
                         onChange={handleChange}
                         required
                     />
@@ -246,38 +264,32 @@ export default function EditCarPage(){
             </div>
             <div className="form-group">
                 <label>
-                    Data Produkcji
-                    <input
-                    name="productionDate"
-                    type="date"
-                    value={formData.productionDate}
-                    onChange={handleChange}
-                    required
-                    />
-                </label>
-            </div>
-            <div className="form-group">
-                <label>
                     Spalanie paliwa
                     <input
-                    name="averageFuelConsumption"
-                    type="number"
-                    value={formData.averageFuelConsumption ?? ""}
-                    onChange={handleChange}
-                    required
+                        name="averageFuelConsumption"
+                        type="number"
+                        value={formData.averageFuelConsumption ?? ""}
+                        onChange={handleChange}
+                        required
                     />
                 </label>
             </div>
             <div className="form-group">
                 <label>
                     Typ nadwozia
-                    <input
-                    name="bodyType"
-                    type="number"
-                    value={formData.bodyType ?? ""}
-                    onChange={handleChange}
-                    required
-                    />
+                    <select
+                        name="bodyType"
+                        value={formData.bodyType ?? ""}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Wybierz typ paliwa</option>
+                        <option value={0}>Hatchback</option>
+                        <option value={1}>Sedan</option>
+                        <option value={2}>Kombi</option>
+                        <option value={3}>SUV</option>
+                        <option value={4}>Roadster</option>
+                    </select>
                 </label>
             </div>
 

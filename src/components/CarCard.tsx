@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { Car } from "../models/Car";
 import { useCarUiStore } from "../store/useCarUiStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 type CarCardProps = {
     car: Car;
@@ -10,15 +11,23 @@ type CarCardProps = {
 
 
 export default function CarCard({ car, onDelete }: CarCardProps) {
-    const isFavorite = useCarUiStore(
-    (state) =>
-        state.favoriteCarIds.includes(
-            car.id,
-        ),
+
+    const user = useAuthStore((state) => state.user);
+    const isAdmin = user?.roles.includes("Admin") ?? false;
+
+    const favoriteCarIdsByUser = useCarUiStore(
+        (state) =>
+            state.favoriteCarIdsByUser,
+    );
+
+    const favoriteCarIds = user ? favoriteCarIdsByUser[user.id] ?? [] : [];
+
+    const isFavorite = favoriteCarIds.includes(
+        car.id,
     );
 
     const toggleFavorite = useCarUiStore(
-        (state)  => 
+        (state) =>
             state.toggleFavorite,
     );
     return (
@@ -31,23 +40,26 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
             <Link to={`/cars/${car.id}/edit`}>Edytuj</Link>
 
             <button
-            type="button"
+                type="button"
                 className={
                     isFavorite ? 'favorite-button active-favorite' : 'favorite-button'
                 }
-                onClick={() => toggleFavorite(car.id)}
+                onClick={() => { if (user) { toggleFavorite(user.id, car.id); } }}
             >
                 {
-                    isFavorite ? 'Ulubiony':'Ulubione'
+                    isFavorite ? 'Ulubiony' : 'Ulubione'
                 }
             </button>
 
-            <button
-                type="button"
-                onClick={() => onDelete(car.id)}
-            >
-                Usuń
-            </button>
+
+            {isAdmin && (
+                <button
+                    type="button"
+                    onClick={() => onDelete(car.id)}
+                >
+                    Usuń
+                </button>
+            )}
         </article>
     );
 }

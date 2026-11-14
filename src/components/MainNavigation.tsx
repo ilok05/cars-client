@@ -1,12 +1,36 @@
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { useCarUiStore } from "../store/useCarUiStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 export function MainNavigation() {
+  const navigate = useNavigate();
+
+  const user =
+    useAuthStore(
+      (state) => state.user,
+    );
+
+  const logout =
+    useAuthStore(
+      (state) => state.logout,
+    );
+
   const favoriteCount =
     useCarUiStore(
       (state) =>
-        state.favoriteCarIds.length,
+        user ? (
+          state.favoriteCarIdsByUser[
+            user.id
+          ] ?? []
+        ).length : 0,
     );
+
+  function handleLogout() {
+    logout();
+    navigate('/login');
+  }
+
+
   return (
     <nav className="navigation">
       <NavLink
@@ -18,25 +42,70 @@ export function MainNavigation() {
         Strona główna
       </NavLink>
 
+      {user && (
+        <>
+          <NavLink
+            to="/cars"
+            end
+            className={({ isActive }) => (isActive ? "active" : undefined)}
+          >
+            Samochody
+          </NavLink>
+
+          <NavLink
+            to="/cars/new"
+            end
+            className={({ isActive }) => (isActive ? "active" : undefined)}
+          >
+            Dodaj Samochod
+          </NavLink>
+        </>
+      )}
       <NavLink
-        to="/cars"
+        to="/about"
         end
         className={({ isActive }) => (isActive ? "active" : undefined)}
       >
-        Samochody
+        O Aplikacji
       </NavLink>
 
-      <NavLink
-        to="/cars/new"
-        end
-        className={({ isActive }) => (isActive ? "active" : undefined)}
-      >
-        Dodaj Samochod
-      </NavLink>
+      {user ? (
+        <>
+          <span className="favorite-counter">
+            Ulubione: {favoriteCount}
+          </span>
 
-      <span className="favorite-counter">
-        Ulubione: {favoriteCount}
-      </span>
+          <span className="user-info">
+            {user.userName}
+            {' ('}
+            {user.roles.join(', ')}
+            {')'}
+          </span>
+
+          <button
+            type="button"
+            className="nav-button"
+            onClick={handleLogout}
+          >
+            Wyloguj
+          </button>
+        </>
+      ) : (
+        <>
+          <NavLink
+            to="/login"
+            end
+            className={({ isActive }) => (isActive ? "active" : undefined)}>
+            Logowanie
+          </NavLink>
+          <NavLink
+            to="/register"
+            end
+            className={({ isActive }) => (isActive ? "active" : undefined)}>
+            Rejestracja
+          </NavLink>
+        </>
+      )}
     </nav>
   );
 }
