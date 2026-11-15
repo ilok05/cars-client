@@ -53,7 +53,7 @@ export default function CreateCarPage() {
     }));
   }
 
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (
@@ -83,7 +83,7 @@ export default function CreateCarPage() {
       setIsLoading(true);
       setError(null);
 
-      createCar(newCar);
+      await createCar(newCar);
 
       setFormData(initialFormData);
 
